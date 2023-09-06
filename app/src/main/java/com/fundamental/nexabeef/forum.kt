@@ -5,16 +5,17 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 @Suppress("DEPRECATION")
 class forum : AppCompatActivity() {
-
-    private lateinit var bottomNavigationView: BottomNavigationView
 
     private lateinit var webView: WebView
 
@@ -30,51 +31,27 @@ class forum : AppCompatActivity() {
         setContentView(R.layout.activity_forum)
 
 
+        // toolbar with back arrow
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Forum"
+        val upArrow = ContextCompat.getDrawable(this, R.drawable.baseline_arrow_back_24)
+        supportActionBar?.setHomeAsUpIndicator(upArrow)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
         //progressbar
         progressbar = findViewById(R.id.progressBar)
 
-        //open bottom navigation
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
 
-                R.id.pasar -> {
-
-                    true
-                }
-                R.id.tools -> {
-                    startActivity(Intent(this, tools::class.java))
-                    finish()
-                    true
-                }
-                R.id.deteksi -> {
-                    startActivity(Intent(this, deteksi::class.java))
-                    finish()
-                    true
-                }
-                R.id.forum -> {
-                    startActivity(Intent(this, forum::class.java))
-                    finish()
-                    true
-                }
-                R.id.akun -> {
-                    startActivity(Intent(this, akun::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
-        // close bottom navigation
 
         //open webview
         // Initialize WebView
         webView = findViewById(R.id.webviewforum)
         webView.settings.javaScriptEnabled = true // Enable JavaScript
 
-        webView.loadUrl("https://herdo226042.000webhostapp.com/forum.php")
+        webView.loadUrl("https://nexabeef.000webhostapp.com/forum.php")
         // Disable zooming
         webView.settings.setSupportZoom(false)
         webView.settings.builtInZoomControls = false
@@ -148,4 +125,19 @@ class forum : AppCompatActivity() {
         // Enable touch events on WebView again after hiding ProgressBar
         webView.setOnTouchListener(null)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // Tindakan yang akan diambil saat tombol panah kembali diklik
+                onBackPressed() // Ini akan kembali ke aktivitas sebelumnya
+                return true
+            }
+            // Item menu lainnya jika ada
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+
+
 }

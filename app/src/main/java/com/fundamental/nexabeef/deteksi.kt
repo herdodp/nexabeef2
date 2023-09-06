@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class deteksi : AppCompatActivity() {
 
 
-    private lateinit var bottomNavigationView: BottomNavigationView
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -18,43 +21,35 @@ class deteksi : AppCompatActivity() {
         setContentView(R.layout.activity_deteksi)
 
 
+        // toolbar with back arrow
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "AI Beef Freshness Detection"
+        val upArrow = ContextCompat.getDrawable(this, R.drawable.baseline_arrow_back_24)
+        supportActionBar?.setHomeAsUpIndicator(upArrow)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        //open bottom navigation
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
 
-                R.id.pasar -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    true
-                }
-                R.id.tools -> {
-                    startActivity(Intent(this, tools::class.java))
-                    finish()
-                    true
-                }
-                R.id.deteksi -> {
-                    startActivity(Intent(this, deteksi::class.java))
-                    finish()
-                    true
-                }
-                R.id.forum -> {
-                    startActivity(Intent(this, forum::class.java))
-                    finish()
-                    true
-                }
-                R.id.akun -> {
-                    startActivity(Intent(this, akun::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
-        // close bottom navigation
+
 
 
 
     }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // Tindakan yang akan diambil saat tombol panah kembali diklik
+                onBackPressed() // Ini akan kembali ke aktivitas sebelumnya
+                return true
+            }
+            // Item menu lainnya jika ada
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+
 }

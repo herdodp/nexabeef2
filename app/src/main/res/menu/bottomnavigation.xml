@@ -7,10 +7,6 @@
         android:icon="@drawable/baseline_storefront_24"
         android:title="Market" />
 
-    <item
-        android:id="@+id/tools"
-        android:icon="@drawable/baseline_build_24"
-        android:title="Tools" />
 
     <item
         android:id="@+id/deteksi"
@@ -22,9 +18,6 @@
         android:icon="@drawable/baseline_forum_24"
         android:title="Forum" />
 
-    <item
-        android:id="@+id/akun"
-        android:icon="@drawable/baseline_account_circle_24"
-        android:title="Account" />
+
 
 </menu>

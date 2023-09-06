@@ -20,42 +20,6 @@ class tools : AppCompatActivity() {
         setContentView(R.layout.activity_tools)
 
 
-        //open bottom navigation
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-
-                R.id.pasar -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                    true
-                }
-
-                R.id.tools -> {
-
-                    true
-                }
-
-                R.id.deteksi -> {
-                    startActivity(Intent(this, deteksi::class.java))
-                    finish()
-                    true
-                }
-
-                R.id.forum -> {
-                    startActivity(Intent(this, forum::class.java))
-                    finish()
-                    true
-                }
-
-                R.id.akun -> {
-                    startActivity(Intent(this, akun::class.java))
-                    finish()
-                    true
-                }
-                else -> false
-            }
-        }
 
 
         val buttonkerugianberat = findViewById<Button>(R.id.kerugianberat)

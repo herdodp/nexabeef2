@@ -37,14 +37,6 @@
     </LinearLayout>
 
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:itemIconTint="#B22222"
-        app:labelVisibilityMode="labeled"
-        app:itemTextColor="#000000"
-        app:menu="@menu/bottomnavigation" />
+
 
 </RelativeLayout>

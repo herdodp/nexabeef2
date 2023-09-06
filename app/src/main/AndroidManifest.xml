@@ -22,9 +22,11 @@
             android:name=".toolskerugianberat"
             android:exported="false" />
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".akun"
             android:exported="false" />
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".forum"
             android:exported="false" />
         <activity
@@ -43,6 +45,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".MainActivity"
             android:exported="false" />
     </application>

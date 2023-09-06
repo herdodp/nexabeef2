@@ -1,14 +1,22 @@
 package com.fundamental.nexabeef
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,14 +24,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
 
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
     private var isPageFinished = false
     private var isTouchDisabled = false
 
     private var isProgressBarVisible = false
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        // Atur listener untuk menangani peristiwa swipe refresh
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            // Panggil metode untuk melakukan pengambilan data yang diperlukan
+            refreshContent()
+        }
+
+        // Inisialisasi Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        actionBar?.setDisplayShowTitleEnabled(true)
+
+        actionBar?.title = "NEXABEEF" // Ganti dengan judul yang Anda inginkan
+
 
 
         //progressbar
@@ -39,29 +67,17 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.tools -> {
-                    startActivity(Intent(this, tools::class.java))
-                    finish()
-                    true
-                }
 
                 R.id.deteksi -> {
                     startActivity(Intent(this, deteksi::class.java))
-                    finish()
                     true
                 }
 
                 R.id.forum -> {
                     startActivity(Intent(this, forum::class.java))
-                    finish()
                     true
                 }
 
-                R.id.akun -> {
-                    startActivity(Intent(this, akun::class.java))
-                    finish()
-                    true
-                }
 
                 else -> false
             }
@@ -150,7 +166,33 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.account -> {
+                startActivity(Intent(this, akun::class.java))
+                return true
+            }
+
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+
+
+    // Metode untuk melakukan pengambilan data yang diperlukan saat swipe refresh
+    private fun refreshContent() {
+        // Lakukan pengambilan data ulang atau lakukan apa yang perlu Anda lakukan
+        // Misalnya, load ulang halaman WebView:
+        // webView.reload()
+        // Setelah melakukan refresh, buka halaman baru
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
 
 }
