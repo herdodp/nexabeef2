@@ -1,19 +1,30 @@
 package com.fundamental.nexabeef
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.hardware.display.DisplayManager
+import android.net.ConnectivityManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Display
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
+
+@Suppress("DEPRECATION")
 class akun : AppCompatActivity() {
 
 
@@ -30,14 +41,34 @@ class akun : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_akun)
 
+        //check connection
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
+        if (networkInfo != null && networkInfo.isConnected) {
+
+        } else {
+            showNoInternetDialog()
+        }
+
+        val progressDialog = ProgressDialog(this@akun)
+        progressDialog.setMessage("LOAD DATA..")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+
+
+
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Profil"
+        supportActionBar?.title = "Account"
 
         val upArrow = ContextCompat.getDrawable(this, R.drawable.baseline_arrow_back_24)
         supportActionBar?.setHomeAsUpIndicator(upArrow)
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //progressbar
@@ -50,7 +81,7 @@ class akun : AppCompatActivity() {
         webView = findViewById(R.id.webView)
         webView.settings.javaScriptEnabled = true // Enable JavaScript
 
-        webView.loadUrl("https://nexabeef.000webhostapp.com/profil.php")
+        webView.loadUrl("https://www.nexabeef.com/profil.php")
         // Disable zooming
         webView.settings.setSupportZoom(false)
         webView.settings.builtInZoomControls = false
@@ -59,12 +90,29 @@ class akun : AppCompatActivity() {
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
 
+        webView.setOnLongClickListener { false }
+
         // Prevent external browser from opening
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                showProgressBar()
-                url?.let { webView.loadUrl(it) }
-                return true
+
+
+                if (url?.startsWith("android-app://com.fundamental.nexabeef/logoutakun") == true){
+                    Toast.makeText(this@akun, "anda telah logout", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@akun, MainActivity::class.java)
+                    startActivity(intent)
+                    return true // Menyatakan bahwa URL telah ditangani
+                }else if(url?.startsWith("android-app://com.fundamental.nexabeef/home") == true){
+                    Toast.makeText(this@akun, "anda Berhasil login", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@akun, MainActivity::class.java)
+                    startActivity(intent)
+                    return true // Menyatakan bahwa URL telah ditangani
+                }else{
+                    showProgressBar()
+                    url?.let { webView.loadUrl(it) }
+                    return false
+                }
+
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -77,6 +125,7 @@ class akun : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 // Hide ProgressBar after page finishes loading
+                progressDialog.dismiss()
                 hideProgressBar()
                 if (!isPageFinished) {
                     progressBar.visibility = View.INVISIBLE
@@ -132,18 +181,67 @@ class akun : AppCompatActivity() {
     }
 
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_akun, menu)
+        return true
+    }
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+
             android.R.id.home -> {
-                startActivity(Intent(this, MainActivity::class.java))
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
                 return true
             }
+
+            R.id.cs -> {
+                openWhatsApp()
+                return true
+            }
+
             // Item menu lainnya jika ada
             else -> return super.onOptionsItemSelected(item)
         }
     }
 
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+    }
 
+
+
+
+    // function for open whatsapp
+    fun openWhatsApp() {
+        val phoneNumber = "6282171321160"
+        val uri = Uri.parse("https://api.whatsapp.com/send/?phone=$phoneNumber")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
+    }
+
+
+
+    private fun showNoInternetDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("No Internet Connection")
+            .setMessage("Please check your internet connection and try again.")
+            .setPositiveButton("EXIT") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+                finishAffinity()
+            }
+            .setCancelable(false)
+            .create()
+            .show()
+    }
 
 
 }

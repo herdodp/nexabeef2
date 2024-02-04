@@ -1,30 +1,44 @@
 package com.fundamental.nexabeef
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.webkit.WebChromeClient
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.JsResult
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var isPageFinished = false
     private var isTouchDisabled = false
@@ -37,20 +51,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        // Atur listener untuk menangani peristiwa swipe refresh
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        swipeRefreshLayout.setOnRefreshListener {
-            // Panggil metode untuk melakukan pengambilan data yang diperlukan
-            refreshContent()
+        //check connection
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+
+        if (networkInfo != null && networkInfo.isConnected) {
+
+        } else {
+            showNoInternetDialog()
         }
 
-        // Inisialisasi Toolbar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayShowTitleEnabled(true)
 
-        actionBar?.title = "NEXABEEF" // Ganti dengan judul yang Anda inginkan
+        actionBar?.title = "NEXABITH" // Ganti dengan judul yang Anda inginkan
 
 
 
@@ -63,20 +93,31 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
 
                 R.id.pasar -> {
-
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                     true
                 }
 
 
-                R.id.deteksi -> {
-                    startActivity(Intent(this, deteksi::class.java))
+                R.id.scan -> {
+                    startActivity(Intent(this, BarcodeScannerActivity::class.java))
+                    finish()
                     true
                 }
 
                 R.id.forum -> {
                     startActivity(Intent(this, forum::class.java))
+                    finish()
                     true
                 }
+
+
+                R.id.akun -> {
+                    startActivity(Intent(this, akun::class.java))
+                    finish()
+                    true
+                }
+
 
 
                 else -> false
@@ -90,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         webView = findViewById(R.id.webView)
         webView.settings.javaScriptEnabled = true // Enable JavaScript
 
-        webView.loadUrl("https://nexabeef.000webhostapp.com/market.php")
+        webView.loadUrl("https://www.nexabeef.com/market.php")
         // Disable zooming
         webView.settings.setSupportZoom(false)
         webView.settings.builtInZoomControls = false
@@ -99,17 +140,84 @@ class MainActivity : AppCompatActivity() {
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
 
-        // Prevent external browser from opening
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                showProgressBar()
-                url?.let { webView.loadUrl(it) }
+        webView.setOnCreateContextMenuListener { _, _, _ -> }
+        webView.setOnLongClickListener { true }
+
+
+
+
+
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onJsAlert(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult?
+            ): Boolean {
+                // Tangani pesan alert di sini
+                // Tampilkan pesan menggunakan AlertDialog atau cara lain
+                val alertDialog = AlertDialog.Builder(this@MainActivity, com.google.android.material.R.style.Base_Theme_Material3_Dark_Dialog)
+                val message1 = "login dulu ya di menu Account"
+                alertDialog.setMessage(message1)
+                alertDialog.setPositiveButton("OK") { _, _ ->
+                    result?.confirm()
+                }
+                alertDialog.setCancelable(false)
+                alertDialog.create().show()
                 return true
             }
+        }
+
+
+
+        val progressDialog = ProgressDialog(this@MainActivity)
+        progressDialog.setMessage("LOAD DATA..")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+
+
+
+
+
+        // Prevent external browser from opening
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+
+
+
+                if (url?.startsWith("android-app://com.fundamental.nexabeef/forcompany") == true){
+                    val intent = Intent(this@MainActivity, forcompany::class.java)
+                    startActivity(intent)
+                    return true // Menyatakan bahwa URL telah ditangani
+
+                }else if (url?.startsWith("android-app://com.fundamental.nexabeef/nexadata") == true){
+                    val intent = Intent(this@MainActivity, nexadata::class.java)
+                    startActivity(intent)
+                    return true // Menyatakan bahwa URL telah ditangani
+
+                }else if(url?.startsWith("android-app://com.fundamental.nexabeef/produk") == true){
+                    val intent = Intent(this@MainActivity, produk::class.java)
+                    startActivity(intent)
+                    return true // Menyatakan bahwa URL telah ditangani
+
+                }else{
+                    showProgressBar()
+                    url?.let { webView.loadUrl(it) }
+                    return false // URL lain dimuat dalam WebView
+                }
+            }
+
+
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 // Show ProgressBar when page starts loading
+                // Menampilkan dialog pop-up loading
+
+
+
                 isPageFinished = false
                 isTouchDisabled = true
             }
@@ -117,6 +225,7 @@ class MainActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 // Hide ProgressBar after page finishes loading
+                progressDialog.dismiss()
                 hideProgressBar()
                 if (!isPageFinished) {
                     progressBar.visibility = View.INVISIBLE
@@ -125,6 +234,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+
+
             override fun onReceivedError(
                 view: WebView?,
                 errorCode: Int,
@@ -132,10 +243,14 @@ class MainActivity : AppCompatActivity() {
                 failingUrl: String?
             ) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
-                // Handle error when WebView fails to load or connect to the server
+
                 startActivity(Intent(this@MainActivity, failedconnect::class.java))
-                finish()
+
             }
+
+
+
+
         }
 
         // Disable touch events on WebView during loading
@@ -166,15 +281,19 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /*
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
+     */
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.account -> {
-                startActivity(Intent(this, akun::class.java))
+
+            R.id.transaction -> {
+                //startActivity(Intent(this, transaksi::class.java))
+                finish()
                 return true
             }
 
@@ -183,16 +302,60 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    // Metode untuk melakukan pengambilan data yang diperlukan saat swipe refresh
-    private fun refreshContent() {
-        // Lakukan pengambilan data ulang atau lakukan apa yang perlu Anda lakukan
-        // Misalnya, load ulang halaman WebView:
-        // webView.reload()
-        // Setelah melakukan refresh, buka halaman baru
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            showExitConfirmationDialog()
+        }
     }
+
+    private fun showExitConfirmationDialog() {
+        val message = "Apakah Anda yakin ingin keluar?"
+
+        // Buat objek SpannableString untuk mengatur warna teks
+        val spannableMessage = SpannableString(message)
+
+        // Tentukan warna hitam (Color.BLACK) untuk seluruh teks dalam pesan
+        spannableMessage.setSpan(
+            ForegroundColorSpan(Color.BLACK),
+            0, // Indeks awal teks (mulai dari karakter pertama)
+            message.length, // Indeks akhir teks (sampai karakter terakhir)
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setTitle("Konfirmasi")
+        alertDialog.setMessage(spannableMessage)
+        alertDialog.setPositiveButton("Ya") { _, _ ->
+            finishAffinity()
+            super.onBackPressed()
+        }
+        alertDialog.setNegativeButton("Tidak") { _, _ ->
+            // Tindakan yang diambil jika tombol "Tidak" ditekan
+        }
+        alertDialog.show()
+    }
+
+
+
+
+
+    private fun showNoInternetDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("No Internet Connection")
+            .setMessage("Please check your internet connection and try again.")
+            .setPositiveButton("EXIT") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+                finishAffinity()
+            }
+            .setCancelable(false)
+            .create()
+            .show()
+    }
+
+
+
+
 
 
 }

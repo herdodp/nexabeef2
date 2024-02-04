@@ -4,37 +4,62 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.VIEW" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/logonexabeef"
+        android:icon="@drawable/logonexabith"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logonexabeef"
+        android:roundIcon="@drawable/logonexabith"
         android:supportsRtl="true"
         android:theme="@style/Theme.Nexabeef"
         tools:targetApi="31">
         <activity
+            android:name=".produk"
+            android:exported="false" />
+        <activity
+            android:name=".forcompany"
+            android:exported="false" />
+
+        <activity
+            android:name=".forum"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".nexadata"
+            android:exported="false" />
+
+        <activity
+            android:name=".hasilscanner"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BarcodeScannerActivity"
+            android:exported="false"
+            android:screenOrientation="sensor" />
+
+
+        <activity
             android:name=".failedconnect"
             android:exported="false" />
         <activity
-            android:name=".toolskerugianberat"
-            android:exported="false" />
-        <activity
-            android:windowSoftInputMode="adjustPan"
             android:name=".akun"
-            android:exported="false" />
-        <activity
-            android:windowSoftInputMode="adjustPan"
-            android:name=".forum"
-            android:exported="false" />
-        <activity
-            android:name=".deteksi"
-            android:exported="false" />
-        <activity
-            android:name=".tools"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".splashscreen"
             android:exported="true">
@@ -45,9 +70,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:windowSoftInputMode="adjustPan"
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

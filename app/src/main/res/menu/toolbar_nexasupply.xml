@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Item menu dengan teks -->
+    <item
+        android:id="@+id/daftar"
+        android:title="Registrasi mitra (WA)"
+        app:showAsAction="always"
+        android:icon="@null" />
+
+</menu>

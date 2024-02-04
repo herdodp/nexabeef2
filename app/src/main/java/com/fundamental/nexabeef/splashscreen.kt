@@ -55,4 +55,7 @@ class splashscreen : AppCompatActivity() {
             .create()
             .show()
     }
+
+
+
 }
